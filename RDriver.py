@@ -34,6 +34,10 @@ class RDriver:
         self.attempts = attempts
         self.cooldown = cooldown / 1000
 
+    def __del__(self):
+        self.driver.close()
+        del self.driver
+
     def _retry(f):
         """
         Decorator that streamlines method retrying.
