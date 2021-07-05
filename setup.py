@@ -13,5 +13,7 @@ setup(name='RDriver',
       author_email='jcomish@sourceiron.com',
       license='Apache 2.0',
       keywords='automation web scraping selenium',
-      packages=['RDriver.py'],
-      install_requires=['selenium>=3.12.0'])
+      # packages=['RDriver.py'],
+      py_modules=["RDriver"],
+      install_requires=['selenium>=3.12.0'],
+      tests_require=['pytest'])
