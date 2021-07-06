@@ -65,21 +65,26 @@ class RDriver:
         """
         by = by.lower()
         if by == "xpath":
-            return self.driver.find_element_by_xpath(locator)
+            results = self.driver.find_elements_by_xpath(locator)
         if by == "id":
-            return self.driver.find_element_by_id(locator)
+            results = self.driver.find_elements_by_id(locator)
         if by == "class_name":
-            return self.driver.find_element_by_class_name(locator)
+            results = self.driver.find_elements_by_class_name(locator)
         if by == "css_selector":
-            return self.driver.find_element_by_css_selector(locator)
+            results = self.driver.find_elements_by_css_selector(locator)
         if by == "text":
-            return self.driver.find_element_by_link_text(locator)
+            results = self.driver.find_elements_by_link_text(locator)
         if by == "partial_link_text":
-            return self.driver.find_element_by_partial_link_text(locator)
+            results = self.driver.find_elements_by_partial_link_text(locator)
         if by == "name":
-            return self.driver.find_element_by_name(locator)
+            results = self.driver.find_elements_by_name(locator)
         if by == "tag_name":
-            return self.driver.find_element_by_tag_name(locator)
+            results = self.driver.find_elements_by_tag_name(locator)
+
+        if len(results) == 1:
+            return results[0]
+        else:
+            return results
 
     def _wait_for_download(self):
         time.sleep(self.download_start_time)  # Wait for download to start
