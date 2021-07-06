@@ -1,5 +1,6 @@
 from selenium import webdriver
 import time
+from selenium.webdriver import ActionChains
 from pathlib import Path
 
 class RDriver:
@@ -100,14 +101,42 @@ class RDriver:
         self.driver.get(url)
 
     @_retry
+    def find_element(self, locator, by="xpath"):
+        """
+        Public method for _find_element. Same thing, but uses the retry like other public methods
+        :param locator: Some sort of locator. This is an xpath by default.
+        :param by:  Defines the type of locator (id, class_name, tag_name, etc)
+        :return:
+        """
+        return self._find_element(locator, by)
+
+    @_retry
+    def move_to_element(self, locator, by="xpath"):
+        """
+        Moves to an element on a page, clicking outside of any overlays.
+        :param locator: Some sort of locator. This is an xpath by default.
+        :param by:  Defines the type of locator (id, class_name, tag_name, etc)
+        :return:
+        """
+        actions = ActionChains(self.driver)
+        if type(locator) == str:
+            actions.move_to_element(self._find_element(locator, by)).click().perform()
+        else:
+            actions.move_to_element(locator).click().perform()
+        return True
+
+    @_retry
     def click(self, locator, by="xpath"):
         """
         Clicks an element on the page.
-        :param locator: Some sort of locator. This is an xpath by default.
+        :param locator: Link of an element to download or a web element already found.
         :param by: Defines the type of locator (id, class_name, tag_name, etc)
         :return: None
         """
-        self._find_element(locator, by).click()
+        if type(locator) == str:
+            self._find_element(locator, by).click()
+        else:
+            locator.click()
         return True
 
     @_retry
@@ -115,36 +144,43 @@ class RDriver:
         """
         Types text into an element that accepts input.
         :param text: Text to type on the page.
-        :param locator: Some sort of locator. This is an xpath by default.
+        :param locator: Link of an element to download or a web element already found.
         :param by: Defines the type of locator (id, class_name, tag_name, etc)
         :return: None
         """
-        self._find_element(locator, by).send_keys(text)
+        if type(locator) == str:
+            self._find_element(locator, by).send_keys(text)
+        else:
+            locator.send_keys(text)
         return True
 
     @_retry
-    def get_data(self, locator, by):
+    def get_data(self, locator, by="xpath"):
         """
         Retrieves the web element, enabling analyis or extraction of the text.
         :param locator: Some sort of locator. This is an xpath by default.
         :param by: Defines the type of locator (id, class_name, tag_name, etc)
         :return: None
         """
-        return self._find_element(locator, by)
-
+        return self._find_element(locator, by="xpath")
 
     @_retry
-    def download_file_from_link(self, locator, by):
+    def download_file_from_link(self, locator, by="xpath"):
         """
         Downloads and waits for a download from a link.
-        :param locator: Link of an element to download
+        :param locator: Link of an element to download or a web element already found.
         :return:
         """
-        self._find_element(locator, by).click()
-        self._wait_for_download()
-        return True
+        if type(locator) == str:
+            self._find_element(locator, by).click()
+            self._wait_for_download()
+            return True
+        else:
+            locator.click()
+            self._wait_for_download()
+            return True
 
-    def download_file_from_url(self, url):
+    def download_file_from_url(self, url="xpath"):
         """
         Downloads and waits for a download from a URL.
         :param url: URL to trigger the download.
